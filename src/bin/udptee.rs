@@ -1,7 +1,7 @@
 #![deny(warnings)]
 
 use std::iter::Iterator;
-use std::net::SocketAddr;
+use std::net::{SocketAddr, ToSocketAddrs};
 
 use futures::sink::BoxSink;
 use futures::{Future, Sink, Stream};
@@ -35,8 +35,15 @@ fn main() -> Result<(), Box<std::error::Error>> {
 
     let starter = futures::stream::iter_ok::<_, ()>(addresses)
         .map(move |address| {
-            let remote_addr: SocketAddr = match address.parse() {
-                Ok(remote_addr) => remote_addr,
+            // synchronous dns resolution, meh
+            let remote_addr = match address.to_socket_addrs() {
+                Ok(mut addr_iter) => match addr_iter.next() {
+                    Some(addr) => addr,
+                    None => {
+                        eprintln!("{} does not resolve to anything?", address);
+                        std::process::exit(1);
+                    }
+                },
                 Err(e) => {
                     eprintln!("{}: {}", address, e);
                     std::process::exit(1);
@@ -56,7 +63,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
                 UdpFramed::new(socket, BytesCodec::new()).split();
 
             let udp_sink = udp_sink.with(move |bytes: bytes::Bytes| {
-                eprintln!("sending {} bytes to {}", bytes.len(), remote_addr);
+                // eprintln!("sending {} bytes to {}", bytes.len(), remote_addr);
                 futures::future::ok((bytes, remote_addr))
             });
 
