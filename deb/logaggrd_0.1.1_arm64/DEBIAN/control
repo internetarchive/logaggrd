@@ -1,0 +1,10 @@
+Package: logaggrd
+Version: 0.1.1
+Architecture: arm64
+Priority: optional
+Standards-Version: 3.9.4
+Maintainer: Alex Dempsey
+Installed-Size: 2565
+Depends: libgcc1 (>= 1:6.0.1), libc6 (>= 2.23)
+Description: [generated from Rust crate logaggrd]
+

@@ -10,7 +10,7 @@ use tokio::net::{UdpFramed, UdpSocket};
 fn start_aggregator(
     address: SocketAddr,
     file: tokio::fs::File,
-) -> Result<(), Box<std::error::Error>> {
+) -> Result<(), Box<dyn std::error::Error>> {
     // create input Stream
     let socket = UdpSocket::bind(&address)?;
     let (_, in_stream) = UdpFramed::new(socket, BytesCodec::new()).split();
@@ -67,7 +67,7 @@ fn start_aggregator(
     Ok(())
 }
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = clap::App::new("logaggrd")
         .version("0.1.0")
         .about("logaggrd - simple udp log aggregator daemon")
