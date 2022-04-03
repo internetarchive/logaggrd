@@ -8,7 +8,7 @@ use futures::{Future, Sink, Stream};
 use tokio::codec::{BytesCodec, FramedRead, FramedWrite};
 use tokio::net::{UdpFramed, UdpSocket};
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = clap::App::new("udptee")
         .version("0.1.0")
         .about(
